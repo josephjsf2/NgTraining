@@ -1,0 +1,15 @@
+
+.footer {
+  bottom: 0;
+  padding-top: 5px;
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  color:white;
+  background-color: #343a40 !important;
+}
+
+
+li > a {
+  color:white;
+}

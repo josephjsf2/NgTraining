@@ -1,0 +1,21 @@
+<div class="login-page">
+  <div class="row justify-content-center align-items-center" style="height:100vh">
+    <div class="wrapper fadeInDown">
+      <div id="formContent">
+
+        <div class="fadeIn first login-page">
+          <img src="https://imgur.com/HIfvZSG.png" id="icon" alt="User Icon" />
+        </div>
+
+        <form [formGroup]="loginFormGroup">
+          <input type="text" id="login" class="fadeIn second" name="login" placeholder="帳號" required=""
+            formControlName="account">
+          <input type="password" id="password" class="fadeIn third" placeholder="密碼" required=""
+            formControlName="password">
+          <input type="submit" class="fadeIn fourth" value="登入" (click)="submitForm()">
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

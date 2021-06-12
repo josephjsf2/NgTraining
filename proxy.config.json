@@ -1,0 +1,12 @@
+{
+  "/rest": {
+    "target": {
+      "host": "spaceadmin.hyweb.com.tw",
+      "protocol": "https:",
+      "port": 443
+    },
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
+}
