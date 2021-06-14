@@ -7,7 +7,7 @@
 	* Service
 	* Module
 	* Routing
-  * Directive
+	* Directive
 	* HttpClient
 	* ReactiveForm
 	* Pipe
