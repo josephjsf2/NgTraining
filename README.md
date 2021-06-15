@@ -38,6 +38,7 @@
 
 ## 基本練習 -
 CSS Framework: Bootstrap 5
+參考網站: https://spaceadmin.hyweb.com.tw
 ### 1. 登入頁 - 需要在登入後從API取得 authToken資訊
 * 使用ReactiveForm實做 
 * 登入失敗時，需顯示錯誤訊息
