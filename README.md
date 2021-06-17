@@ -7,7 +7,7 @@
 	* Service
 	* Module
 	* Routing
-  * Directive
+	* Directive
 	* HttpClient
 	* ReactiveForm
 	* Pipe
@@ -34,10 +34,11 @@
 * 不考慮 RWD
 * 沒有提到的功能可以不實做
 * 有疑問的項目不實做，等確定後才實做
-* 任何API測試前，務必先以postman或是 curl等工具測試過，可以使用才使用程式開發
+* 建議介接任何API，必先以postman或是 curl等工具測試過，確定沒問題後再使用程式執行
 
 ## 基本練習 -
 CSS Framework: Bootstrap 5
+參考網站: https://spaceadmin.hyweb.com.tw
 ### 1. 登入頁 - 需要在登入後從API取得 authToken資訊
 * 使用ReactiveForm實做 
 * 登入失敗時，需顯示錯誤訊息
@@ -88,7 +89,7 @@ CSS Framework: Bootstrap 5
 * 提供重設密碼按鈕，點擊後顯示提供重設密碼介面
     * 提供密碼欄位與確認密碼欄位
     * 提供 peek 功能
-    * 密碼複雜度，不需滿足『大寫英文』、『小寫英文』、『數字』與『特殊符號』其中三種才算合法密碼
+    * 密碼複雜度，需滿足『大寫英文』、『小寫英文』、『數字』與『特殊符號』其中三種才算合法密碼
 * 資料送出至後端過程等待時間，顯示loading/ spinner
 
 
