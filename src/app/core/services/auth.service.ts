@@ -7,7 +7,7 @@ import { AuthToken } from 'src/app/shared/models/auth-token.model';
 
 import { AuthTokenService } from './auth-token.service';
 import { RestService } from './rest.service';
-import { Credential } from '../../shared/models/credential.model'
+import { Credential } from 'src/app/shared/models/credential.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

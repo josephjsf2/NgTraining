@@ -1,0 +1,29 @@
+<div class="row form-inline">
+  <div class="col-md-2 form-inline">
+    <label for="size">筆數</label>
+    <select
+      name="size"
+      id="size"
+      (change)="onSizeSelect($event)"
+      [value]="pager.pageSize"
+    >
+      <option value="10">10</option>
+      <option value="30">30</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+  <div class="col-md-8 d-flex justify-content-center">
+    <ngb-pagination
+      [(page)]="pager.currentPage"
+      [pageSize]="pager.pageSize"
+      [collectionSize]="pager.totalCount"
+      [maxSize]="5"
+      (pageChange)="onPageChange($event)"
+    >
+    </ngb-pagination>
+  </div>
+  <div class="col-md-2">
+    <p>總筆數：{{ pager.totalCount }}</p>
+  </div>
+</div>

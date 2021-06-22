@@ -1,24 +1,29 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-
   <a class="navbar-brand" href="/">
-
     <span class="h3 mx-1">SpaceMe</span>
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">帳號列表</a>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/pages', 'member']">帳號列表</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">公告</a>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/pages', 'annoucement']">公告</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">新聞區</a>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/pages/news']">新聞區</a>
       </li>
     </ul>
     <form class="form-inline">
@@ -79,5 +84,6 @@
         <option value="ve">Venuzuela</option>
       </select>
     </form>
+    <button class="ml-3 btn btn-light" (click)="onLogout()">登出</button>
   </div>
 </nav>

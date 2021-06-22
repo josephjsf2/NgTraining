@@ -1,14 +1,109 @@
 <div class="container">
+  <div class="col-md-12 col-sm-12 col-xs-12 py-3">
+    <h2>人員帳號維護</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 mb-3">
+        <div class="col">
+          <label for="account" class="form-label">帳號</label>
+          <input
+            type="text"
+            class="form-control"
+            id="account"
+            disabled
+            [value]="profileSnapshot.account"
+          />
+        </div>
+        <div class="col">
+          <label for="create-date" class="form-label">建立日期</label>
+          <input
+            type="text"
+            class="form-control"
+            id="create-date"
+            disabled
+            [value]="profileSnapshot.createDate | date"
+          />
+        </div>
+        <div class="col">
+          <label for="mod-date" class="form-label">修改日期</label>
+          <input
+            type="text"
+            class="form-control"
+            id="mod-date"
+            disabled
+            [value]="profileSnapshot.lastModifyDate | date"
+          />
+        </div>
+        <div class="col">
+          <label for="name" class="form-label">姓名</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+          />
+          <span *ngIf="isShowHelp('name')" class="help-block text-danger">{{
+            HELP_TEXT
+          }}</span>
+        </div>
+        <div class="col">
+          <label for="status" class="form-label">狀態</label>
+          <select
+            class="form-control"
+            name="status"
+            id="status"
+            formControlName="status"
+          >
+            <option value="Y">啟用</option>
+            <option value="N">停用</option>
+            <option value="D">已註銷</option>
+          </select>
+          <span *ngIf="isShowHelp('status')" class="help-block text-danger">{{
+            HELP_TEXT
+          }}</span>
+        </div>
+        <div class="col">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="text"
+            class="form-control"
+            id="email"
+            formControlName="email"
+          />
+          <span *ngIf="isShowHelp('email')" class="help-block text-danger">{{
+            getEmailError()
+          }}</span>
+        </div>
 
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-      <div class="x_title">
-        <h2>人員帳號維護 <small></small></h2>
-        <div class="clearfix"></div>
-        新增後續功能與畫面...
+        <div class="col">
+          <label for="contact-phone" class="form-label">聯絡電話</label>
+          <input
+            type="tel"
+            pattern="[0-9]{10}"
+            class="form-control"
+            id="contact-phone"
+            formControlName="contactPhone"
+          />
+        </div>
+        <div class="col">
+          <label for="card-no" class="form-label">卡號</label>
+          <input
+            type="text"
+            class="form-control"
+            id="card-no"
+            formControlName="cardNo"
+          />
+        </div>
       </div>
-
-    </div>
+      <div class="row justify-content-center">
+        <div class="ml-3">
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+        <div class="ml-3">
+          <button (click)="onGoBack()" type="button" class="btn btn-light">
+            返回
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
-
 </div>
