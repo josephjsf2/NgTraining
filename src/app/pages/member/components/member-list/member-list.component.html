@@ -1,33 +1,52 @@
 <div class="container">
-
   <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
+    <div class="x_panel pt-3 pb-3">
       <div class="x_title">
         <h2>人員帳號列表 <small></small></h2>
         <div class="clearfix"></div>
       </div>
-      <div class="row col-md-12 form-inline form-group" style="padding-top:10px;">
-        <div class="col-md-4">
-          <button class="btn btn-primary">新增</button>
+      <div class="row form-inline form-group" style="padding-top: 10px">
+        <div class="col-md-2 align-self-end">
+          <div class="mb-2">
+            <button class="btn btn-primary">新增</button>
+          </div>
         </div>
-        <div class="col-md-8 form-inline">
-          <div class="form-inline mr-sm-2">
-            <label for="">帳號: </label>
-            <input type="text" class="form-control" style="width:100px;" [(ngModel)]="queryMember.account">
+        <div
+          class="col-md-10 justify-content-end form-inline d-flex flex-nowrap"
+        >
+          <div class="form-inline mr-sm-2 mb-2">
+            <label for="">帳號：</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 100px"
+              [(ngModel)]="queryMember.account"
+            />
           </div>
-          <div class="form-inline mr-sm-2">
-            <label for="">姓名: </label>
-            <input type="text" class="form-control" style="width:80px;">
+          <div class="form-inline mr-sm-2 mb-2">
+            <label for="">姓名：</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 80px"
+              [(ngModel)]="queryMember.name"
+            />
           </div>
-          <div class="form-inline mr-sm-2">
-            <label for="">Email: </label>
-            <input type="text" class="form-control">
+          <div class="form-inline mr-sm-2 mb-2">
+            <label for="">Email：</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="queryMember.email"
+            />
           </div>
-          <button class="btn btn-primary" (click)="reloadData()">查詢</button>
+          <div class="mb-2 flex-shrink-0 align-self-end">
+            <button class="btn btn-primary" (click)="reloadData()">查詢</button>
+          </div>
         </div>
       </div>
       <div *ngIf="memberList$ | async; let pager">
-        <ng-container *ngIf="pager.resultList.length>0; else noDataDiv">
+        <ng-container *ngIf="pager.resultList.length > 0; else noDataDiv">
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -41,19 +60,36 @@
             <tbody>
               <tr *ngFor="let member of pager.resultList">
                 <!--點選帳號後將畫面導向編輯畫面-->
-                <td><a>{{member.name}}</a></td>
-                <td>{{member.account}}</td>
-                <td>{{member.cardNo}}</td>
-                <td>{{member.email}}</td>
+                <td>
+                  <a [routerLink]="['/pages', 'member', 'edit', member.uuid]">{{
+                    member.name
+                  }}</a>
+                </td>
+                <td>{{ member.account }}</td>
+                <td>{{ member.cardNo }}</td>
+                <td>{{ member.email }}</td>
                 <!--請調整為 Y: 啟用; N:停用 文字-->
-                <td>{{member.status}}</td>
+                <td>{{ getStatus(member.status) }}</td>
               </tr>
             </tbody>
           </table>
-          <div class="row form-inline">
+
+          <!-- custom pagination component -->
+          <app-pagination
+            (pageChange)="onPageChange($event)"
+            (sizeChange)="onSizeSelect($event)"
+            [pager]="pager"
+          ></app-pagination>
+
+          <!-- <div class="row form-inline">
             <div class="col-md-2 form-inline">
-              <label for="">筆數</label>
-              <select name="" id="">
+              <label for="size">筆數</label>
+              <select
+                name="size"
+                id="size"
+                (change)="onSizeSelect($event)"
+                [value]="pager.pageSize"
+              >
                 <option value="10">10</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -61,20 +97,32 @@
               </select>
             </div>
             <div class="col-md-8 d-flex justify-content-center">
-              <ngb-pagination [(page)]="pager.currentPage" [pageSize]="pager.pageSize"
-                [collectionSize]="pager.totalCount" [maxSize]="5">
+              <ngb-pagination
+                [(page)]="pager.currentPage"
+                [pageSize]="pager.pageSize"
+                [collectionSize]="pager.totalCount"
+                [maxSize]="5"
+                (pageChange)="onPageChange($event)"
+              >
               </ngb-pagination>
             </div>
             <div class="col-md-2">
-              <p>總筆數：{{queryPager.totalCount}}</p>
+              <p>總筆數：{{ queryPager.totalCount }}</p>
             </div>
-          </div>
+          </div> -->
         </ng-container>
         <ng-template #noDataDiv>
           <p>查無資料</p>
         </ng-template>
       </div>
-
+      <div *ngIf="isLoading" class="row justify-content-center pt-5 pb-5">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div *ngIf="error" class="row justify-content-center pt-5 pb-5">
+        <p>{{ error.message }}</p>
+      </div>
     </div>
   </div>
 </div>

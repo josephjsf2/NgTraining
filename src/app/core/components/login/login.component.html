@@ -1,20 +1,65 @@
 <div class="login-page">
-  <div class="row justify-content-center align-items-center" style="height:100vh">
+  <div
+    class="row justify-content-center align-items-center"
+    style="height: 100vh"
+  >
     <div class="wrapper fadeInDown">
       <div id="formContent">
-
         <div class="fadeIn first login-page">
           <img src="https://imgur.com/HIfvZSG.png" id="icon" alt="User Icon" />
         </div>
 
-        <form [formGroup]="loginFormGroup">
-          <input type="text" id="login" class="fadeIn second" name="login" placeholder="帳號" required=""
-            formControlName="account">
-          <input type="password" id="password" class="fadeIn third" placeholder="密碼" required=""
-            formControlName="password">
-          <input type="submit" class="fadeIn fourth" value="登入" (click)="submitForm()">
+        <form class="form" [formGroup]="loginFormGroup">
+          <div class="form-group">
+            <label for="login">帳號</label>
+            <input
+              type="text"
+              id="login"
+              class="form-control fadeIn second"
+              name="login"
+              placeholder="帳號"
+              formControlName="account"
+            />
+            <span
+              *ngIf="
+                !loginFormGroup.get('account').valid &&
+                loginFormGroup.get('account').touched
+              "
+              class="help"
+              >帳號欄位不可留空</span
+            >
+          </div>
+          <div class="form-group position-relative">
+            <label for="password">密碼</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control fadeIn third"
+              placeholder="密碼"
+              formControlName="password"
+              #passwordInput
+            />
+            <span (click)="toggleType()" class="control fadeIn third"
+              >顯示</span
+            >
+            <span
+              *ngIf="
+                !loginFormGroup.get('password').valid &&
+                loginFormGroup.get('password').touched
+              "
+              class="help"
+              >密碼欄位不可留空</span
+            >
+          </div>
+          <input
+            type="submit"
+            class="fadeIn fourth"
+            value="登入"
+            (click)="submitForm()"
+            [disabled]="!allowSubmit"
+          />
+          <span *ngIf="error" class="help mt-3">{{ error.message }}</span>
         </form>
-
       </div>
     </div>
   </div>

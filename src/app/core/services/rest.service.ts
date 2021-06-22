@@ -30,7 +30,7 @@ export class RestService {
     }
 
     return this.http.post<T>(url,
-      this.getRequestayload(payload, contentType), {
+      this.getRequestPayload(payload, contentType), {
       headers: this.getRequestHeaders(contentType)
     }
     );
@@ -50,11 +50,11 @@ export class RestService {
     console.log(this.tokenService.token?.authToken)
     return new HttpHeaders({
       'Content-Type': contentType || 'application/json',
-      'authToken': this.tokenService.token?.authToken
+      'authToken': this.tokenService.token?.authToken || ""
     });
   }
 
-  private getRequestayload(payload: any, contentType: string = 'application/json') {
+  private getRequestPayload(payload: any, contentType: string = 'application/json') {
     switch (contentType) {
       case 'application/json':
         return payload;
