@@ -8,7 +8,11 @@
       <div class="row form-inline form-group" style="padding-top: 10px">
         <div class="col-md-2 align-self-end">
           <div class="mb-2">
-            <button class="btn btn-primary">新增</button>
+            <a
+              class="btn btn-primary"
+              [routerLink]="['/pages', 'member', 'new']"
+              >新增</a
+            >
           </div>
         </div>
         <div
@@ -115,11 +119,7 @@
           <p>查無資料</p>
         </ng-template>
       </div>
-      <div *ngIf="isLoading" class="row justify-content-center pt-5 pb-5">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
+      <app-spinner *ngIf="isLoading"></app-spinner>
       <div *ngIf="error" class="row justify-content-center pt-5 pb-5">
         <p>{{ error.message }}</p>
       </div>

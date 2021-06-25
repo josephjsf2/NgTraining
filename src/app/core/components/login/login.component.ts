@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   allowSubmit = false;
   error: Error = null;
-  httpSubscription: Subscription = null;
+  isSending: boolean = false;
   stateSubscription: Subscription = null;
 
   @ViewChild('passwordInput') passwordRef: ElementRef;
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.tokenService.token) {
       this.navigateAway();
     }
-
+    // can use this.loginFormGroup.valid directly since no async validation is applied
     this.stateSubscription = this.loginFormGroup.statusChanges.subscribe(
       (status) => {
         if (status === 'VALID') {
@@ -54,31 +54,31 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // clear subscriptions
-    if (this.httpSubscription) {
-      this.httpSubscription.unsubscribe();
-    }
     if (this.stateSubscription) {
       this.stateSubscription.unsubscribe();
     }
   }
 
   submitForm() {
+    if (this.isSending) {
+      return;
+    }
     const userData: Credential = {
       account: this.loginFormGroup.get('account').value,
       password: this.loginFormGroup.get('password').value,
     };
-    // prevent submissions
-    if (this.httpSubscription) {
-      this.httpSubscription.unsubscribe();
-    }
-    // send http request
-    this.httpSubscription = this.authService.authentication(userData).subscribe(
+    // prevent multiple clicks
+    this.isSending = true;
+    this.authService.authentication(userData).subscribe(
       (data) => {
         this.error = null;
+        this.isSending = false;
         this.navigateAway();
       },
-      (error) => (this.error = new Error('登入失敗，請檢查您的帳號或密碼。'))
+      (error) => {
+        this.error = new Error('登入失敗，請檢查您的帳號或密碼。');
+        this.isSending = false;
+      }
     );
   }
 

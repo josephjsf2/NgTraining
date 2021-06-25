@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 
 import { MemberService } from './../../services/member.service';
 import { MemberAccount } from 'src/app/shared/models/member-account.model';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-member',
@@ -21,8 +21,11 @@ import { switchMap } from 'rxjs/operators';
 export class EditMemberComponent implements OnInit {
   uuid: string = '';
   form: FormGroup;
+  showModal: boolean = false;
+  isLoading: boolean = false;
+  isDeleting: boolean = false;
+  hasSubmitted: boolean = false;
   HELP_TEXT: string = '此欄位為必填欄位';
-  emailHelpText: string;
   profileSnapshot = new MemberAccount();
 
   constructor(
@@ -32,6 +35,7 @@ export class EditMemberComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.uuid = this.route.snapshot.params['id'];
 
     this.form = new FormGroup({
@@ -42,26 +46,23 @@ export class EditMemberComponent implements OnInit {
         [Validators.required, Validators.email],
         [this.validateEmail.bind(this)]
       ),
-      contactPhone: new FormControl(null),
+      contactMobileTel: new FormControl(null),
       cardNo: new FormControl(null),
     });
 
     this.memberService
       .getMemberById(this.uuid)
+      .pipe(tap(() => (this.isLoading = false)))
       .subscribe((data) => this.bindData(data));
   }
 
   bindData(data: MemberAccount) {
     this.profileSnapshot = data;
-    this.form.get('name').setValue(data.name);
-    this.form.get('status').setValue(data.status);
-    this.form.get('email').setValue(data.email);
-    this.form.get('contactPhone').setValue(null);
-    this.form.get('cardNo').setValue(data.cardNo);
+    this.form.patchValue({ ...data });
   }
 
   validateEmail(control: AbstractControl): Observable<any> | null {
-    if (!control.touched) {
+    if (!control.touched || control.value === this.profileSnapshot.email) {
       return of(null);
     }
     const queryObj = new MemberAccount();
@@ -69,7 +70,6 @@ export class EditMemberComponent implements OnInit {
     return this.memberService.getMemberList(queryObj, null).pipe(
       switchMap((data) => {
         if (data.resultList.length > 0) {
-          this.emailHelpText = '此Email已被使用';
           return of({ existed: true });
         }
         return of(null);
@@ -79,7 +79,7 @@ export class EditMemberComponent implements OnInit {
 
   isShowHelp(controlName: string): boolean {
     const control = this.form.get(controlName);
-    return !control.valid && control.touched;
+    return !control.valid && (control.touched || this.hasSubmitted);
   }
 
   getEmailError() {
@@ -93,18 +93,40 @@ export class EditMemberComponent implements OnInit {
     return this.HELP_TEXT;
   }
   onSubmit() {
+    this.hasSubmitted = true;
     if (!this.form.valid) {
-      alert('無法提交');
       return;
     }
     const updateData = { ...this.profileSnapshot, ...this.form.value };
 
     this.memberService.updateMember(updateData).subscribe((data) => {
-      console.log(data);
+      this.showModal = true;
     });
   }
 
   onGoBack() {
     this.router.navigate(['/'], { relativeTo: this.route });
+  }
+
+  onDelete() {
+    this.isDeleting = true;
+    this.showModal = true;
+  }
+
+  onAlertOk() {
+    // delete actions
+    if (this.isDeleting) {
+      this.showModal = false;
+      this.memberService
+        .deleteMember(this.uuid)
+        .subscribe((data) => console.log(data));
+    }
+    this.showModal = false;
+    this.onGoBack();
+  }
+
+  onAlertCancel() {
+    this.showModal = false;
+    this.isDeleting = false;
   }
 }

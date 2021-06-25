@@ -7,8 +7,16 @@
 
 input,
 select {
-  &.ng-invalid.has-submitted,
   &.ng-invalid.ng-touched {
     @include dangerous;
+  }
+}
+
+.has-submitted {
+  input,
+  select {
+    &.ng-invalid {
+      @include dangerous;
+    }
   }
 }

@@ -1,0 +1,20 @@
+<div>
+  <div *ngIf="showModal" class="app-backdrop">
+    <div class="app-modal container">
+      <div class="row">
+        <div class="col-auto">
+          <ng-content></ng-content>
+        </div>
+      </div>
+      <hr />
+      <div class="row justify-content-end">
+        <div class="col-auto">
+          <button class="btn btn-primary" (click)="onClick()">OK</button>
+        </div>
+        <div *ngIf="hasCanel" class="col-auto">
+          <button class="btn btn-primary" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
