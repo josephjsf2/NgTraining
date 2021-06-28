@@ -1,0 +1,19 @@
+textarea {
+  resize: none;
+  &.app-textarea {
+    display: block;
+    width: 100%;
+    min-height: 50vh;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);
+    }
+  }
+}
+// disabled all fields
+input,
+select,
+textarea {
+  pointer-events: none;
+}

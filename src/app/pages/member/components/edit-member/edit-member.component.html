@@ -1,5 +1,5 @@
-<div class="container">
-  <div class="col-md-12 col-sm-12 col-xs-12 py-3">
+<div class="container py-3">
+  <div class="col-md-12 col-sm-12 col-xs-12 mb-3">
     <h2>人員帳號維護</h2>
     <app-spinner *ngIf="isLoading"></app-spinner>
     <div *ngIf="!isLoading">
@@ -36,7 +36,9 @@
             />
           </div>
           <div class="col">
-            <label for="name" class="form-label">姓名</label>
+            <label for="name" class="form-label"
+              ><span class="text-danger">*</span>姓名</label
+            >
             <input
               type="text"
               class="form-control"
@@ -48,7 +50,9 @@
             }}</span>
           </div>
           <div class="col">
-            <label for="status" class="form-label">狀態</label>
+            <label for="status" class="form-label"
+              ><span class="text-danger">*</span>狀態</label
+            >
             <select
               class="form-control"
               name="status"
@@ -64,7 +68,9 @@
             }}</span>
           </div>
           <div class="col">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label"
+              ><span class="text-danger">*</span>Email</label
+            >
             <input
               [ngClass]="{ 'has-submitted': hasSubmitted }"
               type="text"
@@ -98,10 +104,10 @@
           </div>
         </div>
         <div class="row justify-content-center">
-          <div class="ml-3">
+          <div class="col-auto px-2">
             <button type="submit" class="btn btn-primary">提交</button>
           </div>
-          <div class="ml-3">
+          <div class="col-auto px-2">
             <button (click)="onGoBack()" type="button" class="btn btn-light">
               返回
             </button>
@@ -109,7 +115,16 @@
         </div>
         <hr />
         <div class="row justify-content-end">
-          <div class="col-auto">
+          <div class="col-auto px-2">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              [routerLink]="['reset-password']"
+            >
+              重置密碼
+            </button>
+          </div>
+          <div class="col-auto px-2">
             <button type="button" class="btn btn-danger" (click)="onDelete()">
               刪除
             </button>
@@ -124,6 +139,8 @@
     (okClick)="onAlertOk()"
     (cancelClick)="onAlertCancel()"
   >
-    <h3>編輯完成</h3>
+    <p class="h4" *ngIf="!isDeleting">編輯完成</p>
+    <p class="h4" *ngIf="isDeleting">是否確認刪除?</p>
   </app-modal>
+  <router-outlet></router-outlet>
 </div>

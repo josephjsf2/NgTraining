@@ -1,0 +1,58 @@
+<div class="container py-3">
+  <h2>公告列表</h2>
+  <form class="row justify-content-end mb-3">
+    <label class="col-auto col-form-label form-label text-right">標題：</label>
+    <input
+      class="col-sm-2 form-control"
+      type="text"
+      name="subject"
+      [(ngModel)]="queryAnnouncement.subject"
+    />
+    <label class="col-auto col-form-label form-label">內文：</label>
+    <input
+      class="col-sm-2 form-control"
+      type="text"
+      name="announContent"
+      [(ngModel)]="queryAnnouncement.announContent"
+    />
+    <div class="col-auto px-3">
+      <button class="btn btn-primary" (click)="reloadData()">搜尋</button>
+    </div>
+  </form>
+  <div *ngIf="announcementList$ | async; let pager">
+    <table class="table table-bordered app-table">
+      <thead>
+        <tr>
+          <th scope="col">標題</th>
+          <th>內文</th>
+          <th>建立日期</th>
+          <th>有效時間</th>
+          <th>狀態</th>
+          <th>動作</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let item of pager.resultList">
+        <tr>
+          <td scope="col">{{ item.subject }}</td>
+          <td>{{ item.announContent | truncate }}</td>
+          <td>{{ item.createDate | date: "yyyy/MM/dd" }}</td>
+          <td>{{ item.validStartDate | validDate: item.validEndDate }}</td>
+          <td>{{ item.status | status }}</td>
+          <td>
+            <a
+              class="btn btn-outline-dark btn-sm"
+              [routerLink]="[item.announId]"
+              >檢視細節</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <app-pagination
+      [pager]="pager"
+      (sizeChange)="onSizeChange($event)"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  </div>
+  <app-spinner *ngIf="isLoading"></app-spinner>
+</div>
