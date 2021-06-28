@@ -1,0 +1,77 @@
+<div class="container py-3">
+  <h2>公告詳情</h2>
+  <form *ngIf="detail">
+    <div class="row mb-3">
+      <div class="col-lg-5 form-group">
+        <label class="form-label" for="subject">標題</label>
+        <input
+          type="text"
+          id="subject"
+          class="form-control"
+          [value]="detail.subject"
+        />
+      </div>
+      <div class="col-lg-5">
+        <div class="row">
+          <div class="col-5">
+            <div class="form-group">
+              <label class="form-label" for="validStartDate">有效日期</label>
+              <input
+                type="input"
+                id="validStartDate"
+                class="form-control"
+                [value]="detail.validStartDate | date: 'yyyy-MM-dd'"
+              />
+            </div>
+          </div>
+          <div class="col-auto px-0 align-self-center">
+            <span class="h3">～</span>
+          </div>
+          <div class="col-5">
+            <div class="form-group">
+              <label class="form-label" for="validEndDate">&nbsp;</label>
+              <input
+                type="text"
+                id="validEndDate"
+                class="form-control"
+                [value]="detail.validEndDate | date: 'yyyy-MM-dd'"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2">
+        <label class="form-label" for="status">狀態</label>
+        <select
+          class="form-control"
+          name="status"
+          id="status"
+          [value]="detail.status"
+        >
+          <option value="Y">啟用</option>
+          <option value="Y">停用</option>
+          <option value="Y">註銷</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <label class="form-label" for="announContent">公告內容</label>
+        <textarea
+          name="announContent"
+          id="announContent"
+          class="form-control app-textarea"
+          [value]="detail.announContent"
+        ></textarea>
+      </div>
+    </div>
+    <hr />
+  </form>
+  <app-spinner *ngIf="isLoading"></app-spinner>
+
+  <div class="row justify-content-center">
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="onGoBack()">返回</button>
+    </div>
+  </div>
+</div>

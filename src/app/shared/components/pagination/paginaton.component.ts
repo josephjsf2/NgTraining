@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Pager } from '../../models/pager.model';
-import { MemberAccount } from '../../models/member-account.model';
 
 @Component({
   selector: 'app-pagination',
@@ -8,7 +7,7 @@ import { MemberAccount } from '../../models/member-account.model';
   templateUrl: './pagination.component.html',
 })
 export class PaginationComponent {
-  @Input() pager: Pager<MemberAccount>;
+  @Input() pager: Pager<any>;
   @Output() pageChange = new EventEmitter<number>();
   @Output() sizeChange = new EventEmitter<string>();
 

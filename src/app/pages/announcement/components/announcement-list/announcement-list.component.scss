@@ -1,0 +1,11 @@
+table.app-table {
+  td,
+  th {
+    &:last-child,
+    &:nth-last-child(2) {
+      white-space: nowrap;
+      text-align: center;
+    }
+    padding: 6px;
+  }
+}

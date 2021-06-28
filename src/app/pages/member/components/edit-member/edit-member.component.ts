@@ -28,6 +28,9 @@ export class EditMemberComponent implements OnInit {
   HELP_TEXT: string = '此欄位為必填欄位';
   profileSnapshot = new MemberAccount();
 
+  onAlertOk: () => void;
+  onAlertCancel: () => void;
+
   constructor(
     private route: ActivatedRoute,
     private memberService: MemberService,
@@ -93,6 +96,12 @@ export class EditMemberComponent implements OnInit {
     return this.HELP_TEXT;
   }
   onSubmit() {
+    this.isDeleting = false;
+    this.onAlertOk = () => {
+      this.showModal = false;
+      this.onGoBack();
+    };
+
     this.hasSubmitted = true;
     if (!this.form.valid) {
       return;
@@ -100,33 +109,36 @@ export class EditMemberComponent implements OnInit {
     const updateData = { ...this.profileSnapshot, ...this.form.value };
 
     this.memberService.updateMember(updateData).subscribe((data) => {
-      this.showModal = true;
+      this.showAlert();
     });
-  }
-
-  onGoBack() {
-    this.router.navigate(['/'], { relativeTo: this.route });
   }
 
   onDelete() {
     this.isDeleting = true;
+    this.onAlertOk = () => {
+      this.showModal = false;
+      this.memberService.deleteMember(this.uuid).subscribe(
+        (data) => {
+          console.log(data);
+          this.onGoBack();
+        },
+        (err) => {
+          // error popup
+          alert('刪除失敗');
+        }
+      );
+    };
+    this.onAlertCancel = () => {
+      this.showModal = false;
+    };
+    this.showAlert();
+  }
+
+  showAlert() {
     this.showModal = true;
   }
 
-  onAlertOk() {
-    // delete actions
-    if (this.isDeleting) {
-      this.showModal = false;
-      this.memberService
-        .deleteMember(this.uuid)
-        .subscribe((data) => console.log(data));
-    }
-    this.showModal = false;
-    this.onGoBack();
-  }
-
-  onAlertCancel() {
-    this.showModal = false;
-    this.isDeleting = false;
+  onGoBack() {
+    this.router.navigate(['/'], { relativeTo: this.route });
   }
 }

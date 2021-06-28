@@ -24,9 +24,9 @@ const routes: Routes = [
           import('./pages/news/news.module').then((m) => m.NewsModule),
       },
       {
-        path: 'annoucement',
+        path: 'announcement',
         loadChildren: () =>
-          import('./pages/annoucement/announcement.module').then(
+          import('./pages/announcement/announcement.module').then(
             (m) => m.AnnouncementModule
           ),
       },

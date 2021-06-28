@@ -5,7 +5,7 @@
         <h2>人員帳號列表 <small></small></h2>
         <div class="clearfix"></div>
       </div>
-      <div class="row form-inline form-group" style="padding-top: 10px">
+      <form class="row form-inline form-group" style="padding-top: 10px">
         <div class="col-md-2 align-self-end">
           <div class="mb-2">
             <a
@@ -48,7 +48,7 @@
             <button class="btn btn-primary" (click)="reloadData()">查詢</button>
           </div>
         </div>
-      </div>
+      </form>
       <div *ngIf="memberList$ | async; let pager">
         <ng-container *ngIf="pager.resultList.length > 0; else noDataDiv">
           <table class="table table-bordered">
@@ -73,7 +73,7 @@
                 <td>{{ member.cardNo }}</td>
                 <td>{{ member.email }}</td>
                 <!--請調整為 Y: 啟用; N:停用 文字-->
-                <td>{{ getStatus(member.status) }}</td>
+                <td>{{ member.status | status }}</td>
               </tr>
             </tbody>
           </table>

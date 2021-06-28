@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { RestService } from 'src/app/core/services/rest.service';
+import { ApiResponse } from 'src/app/shared/models/api-response.model';
 import { MemberAccount } from 'src/app/shared/models/member-account.model';
 import { Pager } from 'src/app/shared/models/pager.model';
 import { QueryOption } from 'src/app/shared/models/query-option.model';
@@ -73,7 +74,25 @@ export class MemberService {
    * 新增使用者
    * @param member 使用者資料
    */
-  createMember(member: MemberAccount) {
-    return this.restService.httpPost(`${MemberService.BASE_URL}`, member);
+  createMember(member: MemberAccount): Observable<MemberAccount> {
+    return this.restService.httpPost<MemberAccount>(
+      `${MemberService.BASE_URL}`,
+      member
+    );
+  }
+
+  /**
+   * 修改使用者密碼
+   *
+   * @param {string} uuid 使用者uuid
+   * @return {Observable<ApiResponse>}  {Observable<ApiResponse>}
+   * @memberof MemberService
+   */
+  resetPassword(uuid: string, password: string): Observable<ApiResponse> {
+    return this.restService.httpPut<ApiResponse>(
+      `${MemberService.BASE_URL}/${uuid}/resetPwd`,
+      { password },
+      'application/x-www-form-urlencoded'
+    );
   }
 }
