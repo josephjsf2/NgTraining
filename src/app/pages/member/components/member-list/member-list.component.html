@@ -19,28 +19,31 @@
           class="col-md-10 justify-content-end form-inline d-flex flex-nowrap"
         >
           <div class="form-inline mr-sm-2 mb-2">
-            <label for="">帳號：</label>
+            <label for="account">帳號：</label>
             <input
               type="text"
               class="form-control"
               style="width: 100px"
+              name="account"
               [(ngModel)]="queryMember.account"
             />
           </div>
           <div class="form-inline mr-sm-2 mb-2">
-            <label for="">姓名：</label>
+            <label for="name">姓名：</label>
             <input
               type="text"
               class="form-control"
               style="width: 80px"
+              name="name"
               [(ngModel)]="queryMember.name"
             />
           </div>
           <div class="form-inline mr-sm-2 mb-2">
-            <label for="">Email：</label>
+            <label for="email">Email：</label>
             <input
               type="text"
               class="form-control"
+              name="email"
               [(ngModel)]="queryMember.email"
             />
           </div>
