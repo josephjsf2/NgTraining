@@ -1,40 +1,43 @@
 <div class="card">
   <div class="card-image">
     <figure class="image is-256x256">
-      <img class=""
-        src="https://cdn.cnn.com/cnnnext/dam/assets/210119172339-01-capitol-riot-wide-ground-shot-0106-super-tease.jpg"
-        alt="Placeholder image">
+      <img class="" [src]="article.urlToImage" alt="Placeholder image" />
     </figure>
   </div>
   <div class="card-content">
     <div class="media">
       <div class="media-content">
-        <p class="title is-4">New charges allege Proud Boys prepped for Capitol insurrection - CNN</p>
-        <a class="subtitle is-6">Evan Perez, Katelyn Polantz and Mallory Simon, CNN</a> <a class="ml-3">4
-          hours
-          ago</a>
+        <p class="title is-4">{{ article.title }}</p>
+        <a class="subtitle is-6">{{ article.author }}</a>
+        <a class="ml-3">{{ article.publishedAt | fromNow }}</a>
       </div>
     </div>
     <div class="content">
-      Two prominent affiliates of the Proud Boys face new conspiracy charges related to the US Capitol riot,
-      and
-      another was arrested Wednesday, as the Justice Department laid out a planning and funding effort within
-      the
-      far-right extremist group in a major court d…
+      {{ article.content }}
       <br />
     </div>
   </div>
   <nav class="level">
-    <p class="level-item has-text-centered">
-      <a class="button bd-fat-button is-primary is-light bd-pagination-prev">
+    <p class="level-item has-text-centered buttons box">
+      <button
+        class="button bd-fat-button is-primary is-light bd-pagination-prev"
+        (click)="onPreviousArticle()"
+        [disabled]="articleIndex === 0"
+      >
         <i>←</i>
         <span>Prev</span>
-      </a>
-      <a class="button is-primary" target="_blank">Article Link</a>
-      <a class="button bd-fat-button is-primary is-light bd-pagination-next">
+      </button>
+      <a class="button is-primary" target="_blank" [href]="article.url"
+        >Article Link</a
+      >
+      <button
+        class="button bd-fat-button is-primary is-light bd-pagination-next"
+        (click)="onNextArticle()"
+        [disabled]="articleIndex === totalLength - 1"
+      >
         <span>Next</span>
         <i>→</i>
-      </a>
+      </button>
     </p>
   </nav>
 </div>
