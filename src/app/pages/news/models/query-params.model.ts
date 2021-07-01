@@ -3,4 +3,5 @@ export interface QueryParams {
   category?: string;
   country?: string;
   apiKey?: string;
+  q?: string;
 }

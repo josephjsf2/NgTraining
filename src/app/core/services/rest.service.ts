@@ -12,9 +12,13 @@ export class RestService {
     private tokenService: AuthTokenService
   ) {}
 
-  httpGet<T>(url: string, queryParam?: any): Observable<T> {
+  httpGet<T>(
+    url: string,
+    queryParam?: any,
+    hasHeader: boolean = true
+  ): Observable<T> {
     return this.http.get<T>(url, {
-      headers: this.getRequestHeaders(),
+      headers: hasHeader ? this.getRequestHeaders() : new HttpHeaders(),
       params: this.getRequestParams(queryParam),
     });
   }

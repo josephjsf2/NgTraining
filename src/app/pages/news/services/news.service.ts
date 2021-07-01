@@ -1,42 +1,72 @@
-import { QueryParams } from './../models/query-params.model';
-import { HeadlineResponse } from './../models/headline-response.model';
-import { CountryOption } from './../models/country-option.model';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators'
-import { mockNewsData } from '../mock/news.mock';
+import { Observable, of } from 'rxjs';
+import { switchMap, tap, debounceTime, delay, share } from 'rxjs/operators';
 
+import { News } from '../models/news.model';
+import { mockNewsData } from '../mock/news.mock';
+import { QueryParams } from './../models/query-params.model';
+import { CountryOption } from './../models/country-option.model';
+import { RestService } from 'src/app/core/services/rest.service';
+import { HeadlineResponse } from './../models/headline-response.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NewsService {
-
   apiUrl = 'https://newsapi.org/v2/top-headlines';
-
   queryParam: QueryParams = {
     country: 'us',
     category: 'Business',
     pageSize: 100,
-    apiKey: ''
+    apiKey: 'b73772ea993b4ac686aea7ccfd29a60f',
+    q: '',
   };
+  dispatch: (value: any) => void;
+  newsObserver: Observable<any>;
+  status = { isLoading: true };
+  cacheNewsData: News[];
 
-  constructor() { }
+  constructor(private restService: RestService) {
+    this.init();
+  }
+
+  /**
+   * Initialization function
+   */
+  init() {
+    this.newsObserver = new Observable<any>((observer) => {
+      this.dispatch = observer.next.bind(observer);
+    }).pipe(share());
+  }
 
   /**
    * 取得 News API Observable
    */
   getNewsData(): Observable<HeadlineResponse> {
-    return of(mockNewsData).pipe(delay(1000));  // 模擬網路 delay 1s
-    // 實際連結
-    // `${this.apiUrl}?country=${country}&category=${category}&q=${q}&apiKey=${apiKey}&pageSize=${pageSize}`
+    // mock data
+    // return of(mockNewsData).pipe(delay(1000)); // 模擬網路 delay 1s
+
+    // http request
+    return this.restService.httpGet<HeadlineResponse>(
+      this.apiUrl,
+      this.queryParam,
+      false
+    );
   }
 
   /**
    * 取得類別
    */
   getCategories(): string[] {
-    return ['Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology'];
+    return [
+      'Business',
+      'Entertainment',
+      'General',
+      'Health',
+      'Science',
+      'Sports',
+      'Technology',
+    ];
   }
 
   /**
@@ -97,7 +127,88 @@ export class NewsService {
       { code: 'ua', name: 'Ukraine' },
       { code: 'gb', name: 'United Kingdom' },
       { code: 'us', name: 'United States' },
-      { code: 've', name: 'Venuzuela' }
+      { code: 've', name: 'Venuzuela' },
     ];
+  }
+
+  /**
+   * Emit page load event to observerable
+   */
+  pageOnload() {
+    this.dispatch({
+      action: 'PAGE_ONLOAD',
+      payload: { country: this.getCountry() },
+    });
+  }
+
+  /**
+   * Emit country code change event
+   * @param countryCode 國家代碼
+   */
+  changeCountry(countryCode: string = 'tw') {
+    this.saveCountry(countryCode);
+    this.dispatch({
+      action: 'UPDATE_COUNTRY',
+      payload: { country: countryCode },
+    });
+  }
+
+  /**
+   * Emit category change event
+   * @param category
+   */
+  changeCategory(category: string = 'business') {
+    this.dispatch({ action: 'UPDATE_CATEGORY', payload: { category } });
+  }
+
+  changeKeyWords(keywords: string) {
+    this.dispatch({ action: 'UPDATE_KEYWORDS', payload: { q: keywords } });
+  }
+
+  /**
+   * Save country code to browser
+   * @param country Country Code
+   */
+  saveCountry(country: string): void {
+    localStorage.setItem('newsCountry', country);
+  }
+
+  /**
+   * Get previous country code from browser
+   * @returns Country Code
+   */
+  getCountry(): string {
+    return localStorage.getItem('newsCountry') ?? 'tw';
+  }
+
+  /**
+   * Get main observable
+   */
+  getNews(): Observable<HeadlineResponse> {
+    return this.newsObserver.pipe(
+      tap((dispatchData) => {
+        console.log(dispatchData);
+        this.queryParam = { ...this.queryParam, ...dispatchData.payload };
+      }),
+      switchMap((dispatchData) => {
+        this.status.isLoading = true;
+
+        // set debounceTime if change keywords
+        if (dispatchData.action === 'UPDATE_KEYWORDS') {
+          return this.getNewsData().pipe(debounceTime(1000));
+        }
+        return this.getNewsData();
+      }),
+      tap({
+        next: (data) => {
+          this.status.isLoading = false;
+          this.cacheNewsData = data.articles;
+        },
+      })
+    );
+  }
+
+  getCacheNewsData(): News[] {
+    return this.cacheNewsData;
   }
 }
