@@ -11,15 +11,20 @@
     </div>
   </section>
   <section>
-    <div class="container is-fluid columns">
-      <div class="column is-5">
+    <div class="container columns">
+      <div class="column is-5 app-scroll">
         <section name="news-list">
           <app-news-list [articles]="articles"></app-news-list>
         </section>
       </div>
-      <div class="column is-7">
+      <div class="column is-7 app-scroll">
         <section name="news-content">
-          <app-news-content></app-news-content>
+          <app-news-content
+            *ngIf="articles && articles.length > 0"
+          ></app-news-content>
+          <h3 *ngIf="!articles || articles.length === 0">
+            Sorry, No reuslt found.
+          </h3>
         </section>
       </div>
     </div>

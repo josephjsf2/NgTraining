@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthTokenService } from './auth-token.service';
 import { Observable } from 'rxjs';
+import { retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +18,12 @@ export class RestService {
     queryParam?: any,
     hasHeader: boolean = true
   ): Observable<T> {
-    return this.http.get<T>(url, {
-      headers: hasHeader ? this.getRequestHeaders() : new HttpHeaders(),
-      params: this.getRequestParams(queryParam),
-    });
+    return this.http
+      .get<T>(url, {
+        headers: hasHeader ? this.getRequestHeaders() : new HttpHeaders(),
+        params: this.getRequestParams(queryParam),
+      })
+      .pipe(retry(1));
   }
 
   httpPut<T>(url: string, payload: any, contentType?: any) {

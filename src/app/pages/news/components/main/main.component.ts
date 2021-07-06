@@ -32,7 +32,7 @@ export class MainComponent implements OnInit {
       }
     });
 
-    // subscribe to tab change
+    // subscribe to tab changes
     this.route.params.subscribe((params: Params) => {
       this.category = params['cat'] ?? 'business';
       this.newsService.changeCategory(this.category);

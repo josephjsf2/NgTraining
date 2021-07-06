@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { switchMap, tap, debounceTime, delay, share } from 'rxjs/operators';
+import {
+  switchMap,
+  tap,
+  debounceTime,
+  delay,
+  share,
+  shareReplay,
+} from 'rxjs/operators';
 
 import { News } from '../models/news.model';
 import { mockNewsData } from '../mock/news.mock';
@@ -18,13 +25,13 @@ export class NewsService {
     country: 'us',
     category: 'Business',
     pageSize: 100,
-    apiKey: 'b73772ea993b4ac686aea7ccfd29a60f',
+    apiKey: '87766146f8c44bc5abf6e30f19557a39',
     q: '',
   };
   dispatch: (value: any) => void;
   newsObserver: Observable<any>;
-  status = { isLoading: true };
-  cacheNewsData: News[];
+  cacheNewsData: News[]; //preserve last responded data
+  requestCacheMap: Map<string, Observable<any>> = new Map();
 
   constructor(private restService: RestService) {
     this.init();
@@ -190,22 +197,33 @@ export class NewsService {
         console.log(dispatchData);
         this.queryParam = { ...this.queryParam, ...dispatchData.payload };
       }),
-      switchMap((dispatchData) => {
-        this.status.isLoading = true;
-
-        // set debounceTime if change keywords
-        if (dispatchData.action === 'UPDATE_KEYWORDS') {
-          return this.getNewsData().pipe(debounceTime(1000));
-        }
-        return this.getNewsData();
-      }),
+      switchMap(this.tryGetNewsWithCache.bind(this)),
       tap({
         next: (data) => {
-          this.status.isLoading = false;
           this.cacheNewsData = data.articles;
         },
       })
     );
+  }
+
+  tryGetNewsWithCache() {
+    const { category, country, q } = this.queryParam;
+    const cacheKey = (category + country + q).trim();
+
+    if (!this.requestCacheMap.get(cacheKey)) {
+      this.requestCacheMap.set(
+        cacheKey,
+        this.getNewsData().pipe(shareReplay(1))
+      );
+
+      // clear cache after 1 min
+      setTimeout(() => {
+        this.requestCacheMap.delete(cacheKey);
+      }, 60000);
+
+      return this.requestCacheMap.get(cacheKey);
+    }
+    return this.requestCacheMap.get(cacheKey);
   }
 
   getCacheNewsData(): News[] {

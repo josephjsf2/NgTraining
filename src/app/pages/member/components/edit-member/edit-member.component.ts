@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -18,15 +18,20 @@ import { switchMap, tap } from 'rxjs/operators';
   templateUrl: './edit-member.component.html',
   styleUrls: ['./edit-member.component.scss'],
 })
-export class EditMemberComponent implements OnInit {
+export class EditMemberComponent implements OnInit, OnDestroy {
+  HELP_TEXT: string = '此欄位為必填欄位';
+  EDIT_COMPLETED_TEXT: string = '編輯完成';
+  CONFIRM_DELETE_TEXT: string = '是否確認刪除?';
+
   uuid: string = '';
   form: FormGroup;
   showModal: boolean = false;
   isLoading: boolean = false;
-  isDeleting: boolean = false;
+  hasCancelBtn: boolean = false;
   hasSubmitted: boolean = false;
-  HELP_TEXT: string = '此欄位為必填欄位';
+  alertText: string;
   profileSnapshot = new MemberAccount();
+  memberServiceSubscription: Subscription;
 
   onAlertOk: () => void;
   onAlertCancel: () => void;
@@ -44,19 +49,25 @@ export class EditMemberComponent implements OnInit {
     this.form = new FormGroup({
       name: new FormControl(null, Validators.required),
       status: new FormControl(null, Validators.required),
-      email: new FormControl(
-        null,
-        [Validators.required, Validators.email],
-        [this.validateEmail.bind(this)]
-      ),
+      email: new FormControl(null, {
+        validators: [Validators.required, Validators.email],
+        asyncValidators: [this.validateEmail.bind(this)],
+        updateOn: 'blur',
+      }),
       contactMobileTel: new FormControl(null),
       cardNo: new FormControl(null),
     });
 
-    this.memberService
+    this.memberServiceSubscription = this.memberService
       .getMemberById(this.uuid)
       .pipe(tap(() => (this.isLoading = false)))
       .subscribe((data) => this.bindData(data));
+  }
+
+  ngOnDestroy(): void {
+    if (this.memberServiceSubscription) {
+      this.memberServiceSubscription.unsubscribe();
+    }
   }
 
   bindData(data: MemberAccount) {
@@ -68,6 +79,7 @@ export class EditMemberComponent implements OnInit {
     if (!control.touched || control.value === this.profileSnapshot.email) {
       return of(null);
     }
+
     const queryObj = new MemberAccount();
     queryObj.email = control.value.trim();
     return this.memberService.getMemberList(queryObj, null).pipe(
@@ -96,13 +108,16 @@ export class EditMemberComponent implements OnInit {
     return this.HELP_TEXT;
   }
   onSubmit() {
-    this.isDeleting = false;
+    // config alert modal
+    this.hasCancelBtn = false; // we don't need cancel btn when edit accomplishes
+    this.setAlertText(this.EDIT_COMPLETED_TEXT);
     this.onAlertOk = () => {
-      this.showModal = false;
+      this.closeAlert();
       this.onGoBack();
     };
 
-    this.hasSubmitted = true;
+    this.hasSubmitted = true; // flag form as submitted
+
     if (!this.form.valid) {
       return;
     }
@@ -114,9 +129,13 @@ export class EditMemberComponent implements OnInit {
   }
 
   onDelete() {
-    this.isDeleting = true;
+    // config alert modal
+    this.hasCancelBtn = true;
+    this.setAlertText(this.CONFIRM_DELETE_TEXT);
+
+    // set callback
     this.onAlertOk = () => {
-      this.showModal = false;
+      this.closeAlert();
       this.memberService.deleteMember(this.uuid).subscribe(
         (data) => {
           console.log(data);
@@ -134,11 +153,19 @@ export class EditMemberComponent implements OnInit {
     this.showAlert();
   }
 
+  onGoBack() {
+    this.router.navigate(['/'], { relativeTo: this.route });
+  }
+
   showAlert() {
     this.showModal = true;
   }
 
-  onGoBack() {
-    this.router.navigate(['/'], { relativeTo: this.route });
+  closeAlert() {
+    this.showModal = false;
+  }
+
+  setAlertText(text: string) {
+    this.alertText = text;
   }
 }

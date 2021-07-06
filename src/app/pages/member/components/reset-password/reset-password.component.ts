@@ -71,6 +71,9 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   onSubmit() {
+    this.form.get('password').updateValueAndValidity();
+    this.form.get('password2').updateValueAndValidity();
+
     if (!this.form.valid) {
       return;
     }

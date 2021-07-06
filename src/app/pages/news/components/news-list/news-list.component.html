@@ -1,4 +1,4 @@
-<div class="panel" style="height: 880px; overflow-y: auto">
+<div class="panel">
   <p class="panel-heading">News List</p>
   <div class="panel-block">
     <p class="control has-icons-left">
@@ -7,6 +7,7 @@
         type="text"
         placeholder="Keyword"
         (input)="onInputText($event)"
+        #searchInput
       />
       <span class="icon is-left">
         <i class="fas fa-search" aria-hidden="true"></i>
@@ -23,7 +24,7 @@
       [ngClass]="{ 'app-highlight': i === currentIndex }"
     >
       <div class="column is-4">
-        <figure style="width: 128px" class="is-3by2">
+        <figure class="img is-3by2">
           <img [src]="article.urlToImage" loading="lazy" />
         </figure>
       </div>
