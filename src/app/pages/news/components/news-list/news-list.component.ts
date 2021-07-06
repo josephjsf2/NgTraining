@@ -1,4 +1,5 @@
-import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
 import { NewsContentService } from './../../services/news-content.service';
 import {
   Component,
@@ -7,8 +8,8 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 import { News } from '../../models/news.model';
 import { NewsService } from '../../services/news.service';
@@ -20,12 +21,12 @@ import { NewsService } from '../../services/news.service';
 })
 export class NewsListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() articles: News[] = [];
+  @ViewChild('searchInput') searchInput: any;
   currentIndex: number = 0;
-  newsSubscription: Subscription;
   newsContentSubscription: Subscription;
+  searchInputSubject = new Subject<any>();
 
   constructor(
-    private route: ActivatedRoute,
     private newsService: NewsService,
     private newsContentService: NewsContentService
   ) {}
@@ -34,17 +35,28 @@ export class NewsListComponent implements OnInit, OnDestroy, OnChanges {
     // get news data for the first time
     this.newsService.pageOnload();
 
-    // change content index from outside of this component
+    // subscribe to index change of news content
     this.newsContentSubscription = this.newsContentService
       .getContent()
       .subscribe((data) => {
         this.currentIndex = data.index;
       });
+
+    // subscribe to text changes
+    const searchInputSubscription = this.searchInputSubject
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe({
+        next: (text) => this.newsService.changeKeyWords(text),
+      });
+
+    // teardown all subsriptions
+    this.newsContentSubscription.add(searchInputSubscription);
   }
 
   ngOnDestroy(): void {
-    this.newsSubscription.unsubscribe();
-    this.newsContentSubscription.unsubscribe();
+    this.newsContentSubscription
+      ? this.newsContentSubscription.unsubscribe()
+      : null;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -59,7 +71,8 @@ export class NewsListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onInputText(event: any) {
-    this.newsService.changeKeyWords(event.target.value);
+    this.searchInputSubject.next(event.target.value);
+    // this.newsService.changeKeyWords(event.target.value);
   }
 
   onArticleClick(index: number) {
