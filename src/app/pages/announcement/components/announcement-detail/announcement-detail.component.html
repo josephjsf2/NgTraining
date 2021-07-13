@@ -57,12 +57,12 @@
     <div class="row">
       <div class="col-12">
         <label class="form-label" for="announContent">公告內容</label>
-        <textarea
+        <div
           name="announContent"
           id="announContent"
           class="form-control app-textarea"
-          [value]="detail.announContent"
-        ></textarea>
+          [innerHTML]="detail.announContent"
+        ></div>
       </div>
     </div>
     <hr />

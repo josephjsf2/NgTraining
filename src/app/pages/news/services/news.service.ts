@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {
   switchMap,
@@ -33,7 +33,7 @@ export class NewsService {
   cacheNewsData: News[]; //preserve last responded data
   requestCacheMap: Map<string, Observable<any>> = new Map();
 
-  constructor(private restService: RestService) {
+  constructor(private restService: RestService, private zone: NgZone) {
     this.init();
   }
 
@@ -209,7 +209,7 @@ export class NewsService {
   tryGetNewsWithCache() {
     const { category, country, q } = this.queryParam;
     const cacheKey = (category + country + q).trim();
-
+    console.log(this.requestCacheMap);
     if (!this.requestCacheMap.get(cacheKey)) {
       this.requestCacheMap.set(
         cacheKey,
@@ -217,9 +217,11 @@ export class NewsService {
       );
 
       // clear cache after 1 min
-      setTimeout(() => {
-        this.requestCacheMap.delete(cacheKey);
-      }, 60000);
+      this.zone.runOutsideAngular(() =>
+        setTimeout(() => {
+          this.requestCacheMap.delete(cacheKey);
+        }, 10000)
+      );
 
       return this.requestCacheMap.get(cacheKey);
     }

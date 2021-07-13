@@ -54,15 +54,19 @@ export class NewsListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.newsContentSubscription
-      ? this.newsContentSubscription.unsubscribe()
-      : null;
+    if (this.newsContentSubscription) {
+      this.newsContentSubscription.unsubscribe();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.articles) {
       this.showContent(0);
     }
+  }
+
+  test() {
+    console.log('test12');
   }
 
   showContent(index: number) {

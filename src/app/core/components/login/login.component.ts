@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   isSending: boolean = false;
   stateSubscription: Subscription = null;
 
-  @ViewChild('passwordInput') passwordRef: ElementRef;
+  // @ViewChild('passwordInput') passwordRef: ElementRef;
 
   constructor(
     private authService: AuthService,
@@ -63,18 +63,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.isSending) {
       return;
     }
-    const userData: Credential = {
-      account: this.loginFormGroup.get('account').value,
-      password: this.loginFormGroup.get('password').value,
-    };
+    const userData = this.loginFormGroup.value;
+
     // prevent multiple clicks
     this.isSending = true;
     this.authService.authentication(userData).subscribe(
-      (data) => {
-        this.error = null;
-        this.isSending = false;
-        this.navigateAway();
-      },
+      (data) => this.navigateAway(),
       (error) => {
         this.error = new Error('登入失敗，請檢查您的帳號或密碼。');
         this.isSending = false;
@@ -82,10 +76,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     );
   }
 
-  toggleType() {
-    const currentType = this.passwordRef.nativeElement.type;
-    this.passwordRef.nativeElement.type =
-      currentType === 'password' ? 'text' : 'password';
+  toggleType(view: HTMLInputElement) {
+    const currentType = view.type;
+    view.type = currentType === 'password' ? 'text' : 'password';
   }
 
   navigateAway() {

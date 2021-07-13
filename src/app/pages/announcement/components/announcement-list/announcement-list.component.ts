@@ -64,6 +64,6 @@ export class AnnouncementListComponent implements OnInit {
 
   onPageChange(selectedPage: number) {
     this.queryPager.currentPage = selectedPage;
-    this.reloadData;
+    this.reloadData();
   }
 }

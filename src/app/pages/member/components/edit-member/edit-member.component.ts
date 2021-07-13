@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 
 import { MemberService } from './../../services/member.service';
 import { MemberAccount } from 'src/app/shared/models/member-account.model';
-import { switchMap, tap } from 'rxjs/operators';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-member',
@@ -60,7 +60,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
     this.memberServiceSubscription = this.memberService
       .getMemberById(this.uuid)
-      .pipe(tap(() => (this.isLoading = false)))
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe((data) => this.bindData(data));
   }
 
@@ -76,7 +76,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   }
 
   validateEmail(control: AbstractControl): Observable<any> | null {
-    if (!control.touched || control.value === this.profileSnapshot.email) {
+    if (!control.pristine) {
       return of(null);
     }
 

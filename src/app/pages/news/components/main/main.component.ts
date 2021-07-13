@@ -22,15 +22,18 @@ export class MainComponent implements OnInit {
 
   ngOnInit() {
     this.categories = this.newsService.getCategories();
+    console.log('1');
 
     // main place to get news data
     this.newsSubscription = this.newsService.getNews().subscribe((data) => {
+      console.log('2');
       if (data.status === 'ok') {
         this.articles = data.articles;
       } else {
         this.articles = [];
       }
     });
+    console.log('3');
 
     // subscribe to tab changes
     this.route.params.subscribe((params: Params) => {

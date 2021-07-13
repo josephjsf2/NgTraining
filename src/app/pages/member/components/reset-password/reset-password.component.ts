@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of, pipe } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -12,6 +12,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { EditMemberComponent } from '../edit-member/edit-member.component';
 import { PasswordValidator } from 'src/app/shared/helpers/Validation';
 import { MemberService } from '../../services/member.service';
+import { startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-password',
@@ -42,11 +43,16 @@ export class ResetPasswordComponent implements OnInit {
         [Validators.required],
         [this.validatePassword2.bind(this)]
       ),
-    });
+    }); //add formGroup Validator
 
     this.getParamFromRoot().subscribe((params) => {
       this.uuid = params['id'];
     });
+
+    combineLatest([
+      this.form.get('password').valueChanges.pipe(startWith('')),
+      this.form.get('password2').valueChanges.pipe(startWith('')),
+    ]).subscribe((d) => console.log(d));
   }
 
   getParamFromRoot(): Observable<Params> {
